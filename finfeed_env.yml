@@ -30,3 +30,4 @@ dependencies:
       - openai-whisper
       - tensorflow
       - pytube
+      - movie.py
