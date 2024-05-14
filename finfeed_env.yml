@@ -27,6 +27,7 @@ dependencies:
   - xgboost
   - pmdarima
   - pip:
+      - google-api-python-client
       - lxml
       - openai-whisper
       - tensorflow
