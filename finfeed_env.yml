@@ -2,6 +2,7 @@ name: finfeed_env
 channels:
   - conda-forge
 dependencies:
+  - ffmpeg
   - _py-xgboost-mutex
   - jupyter
   - jupyter-lsp
@@ -30,3 +31,4 @@ dependencies:
       - openai-whisper
       - tensorflow
       - pytube
+      - movie.py
