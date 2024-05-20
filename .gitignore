@@ -160,5 +160,5 @@ cython_debug/
 #.idea/
 
 #ignore files
-data
+data/audio
 API_KEYS.env
