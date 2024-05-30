@@ -2,6 +2,8 @@
 An AI assisted resource (a conversational bot) that efficiently collates finance and economy related current news within a specified time period (eg. 1 week) from a YouTube news channel (eg. Bloomberg) where people can ask about finance related current news.
 # Authors: 
 Aryama Singh (as3844@cornell.edu)
+# Moelling Approach
+![Example Image](dataflow2.png)
 
 ## FinFeed conda environment
 
