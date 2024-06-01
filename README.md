@@ -54,8 +54,8 @@ Since our data collection from YouTube encompasses a wide variety of topics, our
 
 ## Snippets of our webpage
 ![Example Image](image.png) 
-![Example Image](image(1).png) 
-![Example Image](image(2).png)
+![Example Image](image (1).png) 
+![Example Image](image (2).png)
 <figcaption style="text-align:center;"><strong>Figure 3: FinFeed RAG Chatbot Webpage </strong></figcaption>
 
 ## FinFeed conda environment
