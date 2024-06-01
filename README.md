@@ -3,10 +3,10 @@ This project aims to develop an AI assistant that efficiently aggregates current
 ## Authors: 
 Aryama Singh (as3844@cornell.edu), Diliya Yalikun, Korel Gundem, Nazanin Komeilizadeh, Roberto Nunez.
 ## Modeling Approach
-![Example Image](dataflow2.png)
+
 <figure>
   <img src="dataflow2.png" alt="data flow">
-  <figcaption style="text-align:center;"><strong>Figure 1: Architecture of FinFeed.</strong></figcaption>
+  <dive style="text-align:center;"><strong>Figure 1: Architecture of FinFeed.</strong></div>
 </figure>
 
 
