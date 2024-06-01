@@ -22,7 +22,7 @@ We wanted to analyze people’s reaction to the current news. We achieved this b
 * **General Political Tendency**: It defines a general political leaning of the comment and justifies the reasoning.
 
 ### Sentiment Analysis on the context 
-We evaluated pre-trained LLM models for financial sentiment analysis, including FinancialBERT, ProsusAI/finbert, and GPT-3.5 Turbo, using a pre-labeled Kaggle dataset. Accuracy scores were used to rank their performance.
+We evaluated pre-trained LLM models for financial sentiment analysis, including FinancialBERT, ProsusAI/finbert, and GPT-3.5 Turbo, using a [pre-labeled Kaggle dataset](https://www.kaggle.com/datasets/ankurzing/sentiment-analysis-for-financial-news). Accuracy scores were used to rank their performance.
 This helped us identify the best model for sentiment analysis of our text chunks. The attached table shows the accuracy scores of FinancialBERT, ProsusAI/finbert, and GPT-3.5 Turbo on the Kaggle dataset
 | Model    | FinancialBERT | ProsusAI/finbert | GPT-3.5 |
 |----------|---------------|------------------|---------|
