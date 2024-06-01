@@ -4,7 +4,7 @@ This project aims to develop an AI assistant that efficiently aggregates current
 Aryama Singh (as3844@cornell.edu), Diliya Yalikun, Korel Gundem, Nazanin Komeilizadeh, Roberto Nunez.
 ## Modeling Approach
 ![Example Image](dataflow2.png)
-<figcaption>Architechture of FinFeed</figcaption>
+<figcaption>**Architechture of FinFeed** </figcaption>
 
 In our modelling approach, chaining and context transmission to the LLM model is crucial for generating precise responses. After preprocessing and vectorizing text chunks, embeddings are stored in a Pinecone vector database. Upon receiving a user query, we use cosine similarity to identify and rank the most relevant text chunks efficiently.
 These top-matching chunks are then chained together to form a cohesive context. LangChain, a framework for building applications with language models, facilitates this process by seamlessly integrating different components and ensuring efficient data flow.
@@ -13,9 +13,9 @@ The curated context is then sent to our LLM model, GPT-3.5 Turbo, chosen for its
 ### Sentiment Analysis on the comments
 We wanted to analyze people’s reaction to the current news. We achieved this by passing the comments as context to our LLM model (chat gpt 3.5 turbo) and prompted it to return the sentiments of the people based on the following schema:
 
-**General Sentiment**: It gives the general sentiment of the comment either Positive, Neutral or Negative.
-**Aggressiveness Score**:  It defines the tone of the language used between 0 to 5, ranging from least aggressive to most aggressive.
-**General Political Tendency**: It defines a general political leaning of the comment and justifies the reasoning.
+* **General Sentiment**: It gives the general sentiment of the comment either Positive, Neutral or Negative.
+* **Aggressiveness Score**:  It defines the tone of the language used between 0 to 5, ranging from least aggressive to most aggressive.
+* **General Political Tendency**: It defines a general political leaning of the comment and justifies the reasoning.
 
 ### Sentiment Analysis on the context 
 We evaluated pre-trained LLM models for financial sentiment analysis, including FinancialBERT, ProsusAI/finbert, and GPT-3.5 Turbo, using a pre-labeled Kaggle dataset. Accuracy scores were used to rank their performance.
@@ -34,10 +34,10 @@ This process helped us benchmark our specialized model against a strong baseline
 Using the above modeling approach and framework, this chatbot delivers the most current information in financial fields with proper citations. It also provides users with dynamic sentiment graphs for each context (news) based on the prompted query and analyzes the sentiments associated with public opinions on that news. We also developed a web app that interacts with users based on their queries. The chatbot's responses are then derived from the latest financial news.
 
 ## Challenges and Possible Solutions
-* **Transcription**: Transcribing audio files took a long time since we were doing it locally using only our CPU.
-* **Upserting metadata**: Pinecone doesn’t provide a straightforward function to get vector ids. We had to collect all ids and match it with the source transcription file to update it with YT metadata.
-* **Prompt templates**: Prompting is a crucial component in creating a RAG system. Since our system involved multiple LLMs, we employed various prompt techniques for different tasks. We experimented extensively with techniques such as Zero-Shot, One-Shot, and Chain-of-Thought prompting. Ultimately, Chain-of-Thought prompting yielded the best performance, particularly for sentiment analysis.
-* **Chaining of Multiple LLMs**: Chaining multiple LLMs in a RAG system introduced several challenges, such as increased latency, inconsistent outputs, and compounded errors. To mitigate this, parallel processing and optimizing model efficiency were employed. Inconsistent outputs were addressed by implementing robust validation and consensus mechanisms. Compounded errors escalated through the chain, necessitating error correction protocols and redundancy checks to ensure the reliability and accuracy of the final output. We are still working on this.
+- **Transcription**: Transcribing audio files took a long time since we were doing it locally using only our CPU.
+- **Upserting metadata**: Pinecone doesn’t provide a straightforward function to get vector ids. We had to collect all ids and match it with the source transcription file to update it with YT metadata.
+- **Prompt templates**: Prompting is a crucial component in creating a RAG system. Since our system involved multiple LLMs, we employed various prompt techniques for different tasks. We experimented extensively with techniques such as Zero-Shot, One-Shot, and Chain-of-Thought prompting. Ultimately, Chain-of-Thought prompting yielded the best performance, particularly for sentiment analysis.
+- **Chaining of Multiple LLMs**: Chaining multiple LLMs in a RAG system introduced several challenges, such as increased latency, inconsistent outputs, and compounded errors. To mitigate this, parallel processing and optimizing model efficiency were employed. Inconsistent outputs were addressed by implementing robust validation and consensus mechanisms. Compounded errors escalated through the chain, necessitating error correction protocols and redundancy checks to ensure the reliability and accuracy of the final output. We are still working on this.
 
 ## Future Directions
 Since our data collection from YouTube encompasses a wide variety of topics, our framework can be adapted to different subjects by altering its knowledge base, and a multimodal approach can be integrated at the initial data processing step to enhance the product's sophistication. We can further augment our model by:
