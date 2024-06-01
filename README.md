@@ -1,7 +1,7 @@
 # FinFeed RAG ChatBot
 This project aims to develop an AI assistant that efficiently aggregates current news related to finance, economy, and politics from YouTube news channels within a specified timeframe. The assistant allows users to inquire about recent economic news and receive responses through a Retrieval-Augmented Generation (RAG) system. The system simultaneously presents a dynamic  sentiment graph for each context relevant to the query and examines public opinions derived from YouTube comments.
 ## Authors: 
-Aryama Singh (as3844@cornell.edu), Diliya Yalikun, Korel Gundem, Nazanin Komeilizadeh, Roberto Nunez.
+Aryama Singh (as3844@cornell.edu), Diliya Yalikun (adamliya98@gmail.com), Korel Gundem (korelgundem@gwmail.gwu.edu), Nazanin Komeilizadeh, Roberto Nunez (robertonunezch@gmail.com).
 ## Modeling Approach
 
 <figure>
@@ -34,13 +34,13 @@ Next, GPT-4.0 acted as an impartial evaluator, using a specific prompt to choose
 This process helped us benchmark our specialized model against a strong baseline, ensuring effective financial information delivery. The plot below shows the comparison between GPT-3.5 Turbo and FinFeed.
 ![Example Image](barplot_experiment_1.png)
 
-<figcaption style="text-align:center;"><strong>Figure 2: Our model Performance vs a baseline model</strong></figcaption>
+<figcaption style="text-align:center;"><strong>Figure 2: Our model vs a baseline model performance</strong></figcaption>
 
 ## Results
 Using the above modeling approach and framework, this chatbot delivers the most current information in financial fields with proper citations. It also provides users with dynamic sentiment graphs for each context (news) based on the prompted query and analyzes the sentiments associated with public opinions on that news. We also developed a web app that interacts with users based on their queries. The chatbot's responses are then derived from the latest financial news.
 
 ## Challenges and Possible Solutions
-- **Transcription**: Transcribing audio files took a long time since we were doing it locally using only our CPU.
+- **Transcription**: Transcribing audio files took a long time since we were doing it locally using only our CPU. We used async IO, a concurrent programming technique that allows us to handle multiple tasks. 
 - **Upserting metadata**: Pinecone doesn’t provide a straightforward function to get vector ids. We had to collect all ids and match it with the source transcription file to update it with YT metadata.
 - **Prompt templates**: Prompting is a crucial component in creating a RAG system. Since our system involved multiple LLMs, we employed various prompt techniques for different tasks. We experimented extensively with techniques such as Zero-Shot, One-Shot, and Chain-of-Thought prompting. Ultimately, Chain-of-Thought prompting yielded the best performance, particularly for sentiment analysis.
 - **Chaining of Multiple LLMs**: Chaining multiple LLMs in a RAG system introduced several challenges, such as increased latency, inconsistent outputs, and compounded errors. To mitigate this, parallel processing and optimizing model efficiency were employed. Inconsistent outputs were addressed by implementing robust validation and consensus mechanisms. Compounded errors escalated through the chain, necessitating error correction protocols and redundancy checks to ensure the reliability and accuracy of the final output. We are still working on this.
@@ -56,20 +56,7 @@ Since our data collection from YouTube encompasses a wide variety of topics, our
 ## FinFeed conda environment
 
 You should set up a finfeed conda environment and run all of the notebooks with this environment.
-
-Check to make sure you have conda by running the following in your command line interface:
-
-    conda --version
-
-If you don't have conda, google how to install it!
-
-Once you have conda run:
-
-    conda env create --name finfeed_env --file=finfeed_env.yml
-
-Press [y] to all of the prompts.  You will be downloading a lot of packages.
-
-Once this is done:
+To activate finfeed enivironment:
 
     conda activate finfeed_env
 
