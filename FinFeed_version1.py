@@ -9,6 +9,11 @@ from langchain_openai.embeddings import OpenAIEmbeddings
 from pinecone import Pinecone,  PodSpec
 from langchain_pinecone import PineconeVectorStore
 from langchain_core.runnables import RunnablePassthrough
+import re
+from collections import Counter
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from transformers import pipeline
 load_dotenv("API_KEYS")
 class FinFeedRAG:
     def __init__(self, pine_cone_api_key, openai_api_key, pinecone_index, embeddings_model= OpenAIEmbeddings(),model='gpt-3.5-turbo'):
@@ -20,8 +25,8 @@ class FinFeedRAG:
         self.embeddings=embeddings_model
         self.model=model
         self.template = """
-                Answer the question based on the context below. If you can't
-                answer the question, reply "I don't know".
+                Answer the question based on the context below but pretend like you are a news reporter who just received the context as the latest news. 
+                If you can't answer the question, reply "I do not have enough information to answer this question".
                 
                 Context: {context}
                 
@@ -37,20 +42,20 @@ class FinFeedRAG:
     
     def preprocess_youtube_text(self, text_file, chunksize,chunkoverlap):
 
-        text_file=preprocess_input(text_file)
+        self.preprocess_input(text_file,save_back_to_file=True)
         
         loader = TextLoader(text_file) #text instance of langchain
         text_documents = loader.load() 
         # Assuming RecursiveCharacterTextSplitter is a class you have access to or have created
         splitter = RecursiveCharacterTextSplitter(chunk_size=chunksize, chunk_overlap=chunkoverlap)
-        processed_text = splitter.split(text_documents)
+        processed_text = splitter.split_documents(text_documents)
         # Further processing can be done here if necessary
         return processed_text
 
-    def upload_to_vb(self,text,embeddings,index=None):
+    def upload_to_vb(self,text,embeddings,chunksize, chunkoverlap,index=None):
         if index is None:
             index = self.pinecone_index
-        return PineconeVectorStore.from_documents(self.preprocess_youtube_text(text), self.embeddings, index_name=index)     
+        return PineconeVectorStore.from_documents(self.preprocess_youtube_text(text,chunksize,chunkoverlap), self.embeddings, index_name=index)
 
 
     def preprocess_input(self, text_file,save_back_to_file=True):
@@ -81,8 +86,6 @@ class FinFeedRAG:
             final_text = ' '.join(filtered_words)
             return final_text
         
-           
-
     def most_common(self, input_text_file,most_common=10):
         # Preprocess the text
         processed_text = self.preprocess_input(input_text_file,save_back_to_file=False)    
@@ -94,20 +97,11 @@ class FinFeedRAG:
         query = ' '.join(word for word, _ in common_words)
         return query
 
-     
     def retrieve_embeddings(self, query, most_similar=2):
-        assert self.vector_db is not None, "Initialize Pinecone first"
+        assert self.vector_db is not_none, "Initialize Pinecone first"
         query_result = self.vector_db.query(vector=self.embeddings.embed_query(query), top_k=most_similar)
         ids = [item['id'] for item in query_result['matches']]
         return [self.vector_db.fetch(ids)['vectors'][id]['values'] for id in ids]
-
-
-    def query_langchain(self, query, most_similar=2,index=None):
-        if index is None:
-            index = self.pinecone_index
-        # Use LangChain to process the query and get results
-        return PineconeVectorStore.from_existing_index(index_name=self.pinecone_index,embedding=self.embeddings).similarity_search(query,k=most_similar)
-        
 
     def provide_context(self, query,index=None,most_similar=2):
         if index is None:
@@ -115,7 +109,7 @@ class FinFeedRAG:
         # Provide context to LLM
         return PineconeVectorStore.from_existing_index(index_name=index,embedding=self.embeddings).as_retriever(search_type='similarity',
                 search_kwargs={
-                'k': most_similar}).invoke(query)
+                'k': 10}).invoke(query)
         
     def prompt(self,template=None):
         if template is None:
@@ -137,11 +131,48 @@ class FinFeedRAG:
         chaining = (
         {"context": PineconeVectorStore.from_existing_index(index_name=self.pinecone_index,embedding=self.embeddings).as_retriever(search_type='similarity',
                 search_kwargs={
-                'k': 4}), 
+                'k': 10}), 
          "question": RunnablePassthrough()}
         | self.prompt()
         | self.llm()
         | self.parser())
         return chaining.invoke(query)
-     
+    
+    def pipe(self,chunk):
+        pipe = pipeline("text-classification", model="mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis")
+        return pipe(chunk)
+
+    def get_sentiment(self,chunks,neutrality_threshdold=0.3):
+        """Gets the compound sentiment of the chunks based on their individual sentiment
+        Parameters
+        ----------
+        chunks : list
+            List of text chunks
+        neutrality_threshdold : float, optional
+            A hyperparameter neutrality_threshdold tunes how certain we need to be of a sentiment to classify it as positive or negative
+            (If neutrality_threshdold=1, any list of chunks will result in a neutral sentiment
+            If neutrality_threshdold=0, any list of chunks will be classified as positive or negative)
+        Returns
+        -------
+        int
+            1 for positive, 0 for neutral, and -1 for negative
+        """
+        #Assing a numerical value to each sentiment to simplify calculations
+        sentiment_values = {'positive':1, 'neutral':0, 'negative':-1}
+        #Run each chunk through sentiment model
+        sentiments = [self.pipe(chunk.page_content)[0] for chunk in chunks]
+        #Print out model output
+        #print(sentiments)
+        #For each chunk, we compute a sentiment score by multiplying the score times the sentiment value corresponding to its label
+        sentiment_scores = [(sentiment['score'])*sentiment_values[sentiment['label']] for sentiment in sentiments]
+        #Average sentiment_scores
+        avg_sentiment_score = sum(sentiment_scores)/len(sentiment_scores)
+        if avg_sentiment_score >= neutrality_threshdold:
+            return ('positive',sentiments)
+        elif avg_sentiment_score <= -neutrality_threshdold:
+            return ('negative',sentiments)
+        else:
+            return ('neutral',sentiments)
+            
+
      
