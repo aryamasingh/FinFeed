@@ -4,8 +4,11 @@ This project aims to develop an AI assistant that efficiently aggregates current
 Aryama Singh (as3844@cornell.edu), Diliya Yalikun, Korel Gundem, Nazanin Komeilizadeh, Roberto Nunez.
 ## Modeling Approach
 ![Example Image](dataflow2.png)
+<figure>
+  <img src="dataflow2.png" alt="data flow">
+  <figcaption style="text-align:center;"><strong>Figure 1: Architecture of FinFeed.</strong></figcaption>
+</figure>
 
-<figcaption style="text-align:center;"><strong>Architecture of FinFeed</strong></figcaption>
 
 In our modelling approach, chaining and context transmission to the LLM model is crucial for generating precise responses. After preprocessing and vectorizing text chunks, embeddings are stored in a Pinecone vector database. Upon receiving a user query, we use cosine similarity to identify and rank the most relevant text chunks efficiently.
 These top-matching chunks are then chained together to form a cohesive context. LangChain, a framework for building applications with language models, facilitates this process by seamlessly integrating different components and ensuring efficient data flow.
@@ -30,6 +33,8 @@ To evaluate our models, we asked GPT-3.5 Turbo to generate 50 finance-related qu
 Next, GPT-4.0 acted as an impartial evaluator, using a specific prompt to choose the most relevant answers between the two models. This comparison allowed us to determine which model—GPT-3.5 Turbo or FinFeed—provided the most accurate and relevant responses.
 This process helped us benchmark our specialized model against a strong baseline, ensuring effective financial information delivery. The plot below shows the comparison between GPT-3.5 Turbo and FinFeed.
 ![Example Image](barplot_experiment_1.png)
+
+<figcaption style="text-align:center;"><strong>Figure 2: Our model Performance vs a baseline model</strong></figcaption>
 
 ## Results
 Using the above modeling approach and framework, this chatbot delivers the most current information in financial fields with proper citations. It also provides users with dynamic sentiment graphs for each context (news) based on the prompted query and analyzes the sentiments associated with public opinions on that news. We also developed a web app that interacts with users based on their queries. The chatbot's responses are then derived from the latest financial news.
